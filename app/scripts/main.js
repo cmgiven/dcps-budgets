@@ -11,7 +11,7 @@
 
         DATA_PATH = 'data/data.csv',
 
-        CURRENT_YEAR = 2016,
+        CURRENT_YEAR = 2017,
 
         CATEGORIES = {
             enrollment: 'Enrollment-Based Funds',
