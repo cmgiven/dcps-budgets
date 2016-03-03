@@ -106,11 +106,16 @@
                 }
 
                 if (app.globals.category === 'gened') {
-                    $('#legend .other').removeClass('hidden');
-                    $('#legend .extra-category').addClass('hidden');
+                    $('#legend li').removeClass('hidden');
+                    $('#legend .other-gened').removeClass('hidden');
+                    $('#legend .gened-hidden').addClass('hidden');
+                } else if (app.globals.category === 'atrisk') {
+                    $('#legend li').addClass('hidden');
+                    $('#legend .atrisk').removeClass('hidden');
+                    $('#legend .other-atrisk').removeClass('hidden');
                 } else {
+                    $('#legend li').removeClass('hidden');
                     $('#legend .other').addClass('hidden');
-                    $('#legend .extra-category').removeClass('hidden');
                 }
             }
 
@@ -253,7 +258,7 @@
             .attr('scope', 'col')
             .attr('data-sort', 'enrollment')
             .attr('class', 'descending')
-            .text('2016 Enrollment')
+            .text(CURRENT_YEAR + ' Enrollment')
             .append('span')
             .attr('class', 'sort-arrow');
         header.append('th')

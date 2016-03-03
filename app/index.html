@@ -39,7 +39,7 @@
     <div id="main">
       <header>
         <h1>Per Student Funding</h1>
-        <h2 class="tagline">Examining how DCPS budgets will change under the FY16 budget proposal</h2>
+        <h2 class="tagline">Examining how DCPS budgets will change under the FY17 budget proposal</h2>
         <p class="what"><a href="#description">What is this?</a> | <a href="#definitions">Definitions</a> | <a href="#sources">Sources and Notes</a></p>
       </header>
       <div id="controls">
@@ -52,14 +52,15 @@
         <form id="categories">
           <input type="radio" name="category" id="category-gened" value="gened" checked="checked" />
           <label for="category-gened">General Education</label>
+          <input type="radio" name="category" id="category-atrisk" value="atrisk" />
+          <label for="category-atrisk">At-Risk</label>
           <input type="radio" name="category" id="category-total" value="total" />
           <label for="category-total">Total Budget</label>
 <!--      <input type="radio" name="category" id="category-sped" value="sped" />
           <label for="category-sped">Special Education</label>
           <input type="radio" name="category" id="category-ell" value="ell" />
           <label for="category-ell">English Learners</label>
-          <input type="radio" name="category" id="category-atrisk" value="atrisk" />
-          <label for="category-atrisk">At-Risk</label>
+
           <input type="radio" name="category" id="category-income" value="income" />
           <label for="category-income">Income-Linked</label> -->
         </form>
@@ -106,11 +107,12 @@
           <li class="specialty">Specialty Funds <a href="#defn_SPECIALTY" title="Show definition" class="question">?</a></li>
           <li class="perpupilmin">Per-Pupil Funding Minimum <a href="#defn_PPFM" title="Show definition" class="question">?</a></li>
           <li class="stabilization">Stabilization Funds <a href="#defn_STABILIZATION" title="Show definition" class="question">?</a></li>
-          <li class="sped extra-category">Special Education <a href="#defn_SPED" title="Show definition" class="question">?</a></li>
-          <li class="ell extra-category">English Language Learners <a href="#defn_ELL" title="Show definition" class="question">?</a></li>
-          <li class="atrisk extra-category">At-Risk Funds <a href="#defn_ATRISK" title="Show definition" class="question">?</a></li>
-          <li class="income extra-category">Federal Title and ASP/ECR Funds <a href="#defn_TITLE" title="Show definition" class="question">?</a></li>
-          <li class="other">Non-General Education Funds <a href="#defn_NONGENED" title="Show definition" class="question">?</a></li>
+          <li class="sped gened-hidden">Special Education <a href="#defn_SPED" title="Show definition" class="question">?</a></li>
+          <li class="ell gened-hidden">English Language Learners <a href="#defn_ELL" title="Show definition" class="question">?</a></li>
+          <li class="atrisk gened-hidden">At-Risk Funds <a href="#defn_ATRISK" title="Show definition" class="question">?</a></li>
+          <li class="income gened-hidden">Federal Title and ASP/ECR Funds <a href="#defn_TITLE" title="Show definition" class="question">?</a></li>
+          <li class="other other-gened">Non-General Education Funds <a href="#defn_NONGENED" title="Show definition" class="question">?</a></li>
+          <li class="other other-atrisk gened-hidden">Non-At-Risk Funds</li>
         </ul>
       </div>
       <div id="exhibit"></div>
@@ -118,23 +120,23 @@
         <div class="container">
           <h2 class="field schoolname">School Name</h2>
           <div class="column previous-year">
-            <h4>2015 Enrollment</h4>
+            <h4><span class="year">2016</span> Enrollment</h4>
             <div class="chart field atriskpercent previous-year"></div>
             <p><span class="field enrollment amount previous-year"></span> total enrollment</p>
             <p><span class="field atriskcount amount previous-year"></span> at-risk students</p>
           </div>
-          <div class="column">
-            <h4>2016 Enrollment</h4>
+          <div class="column current-year">
+            <h4><span class="year">2017</span> Enrollment</h4>
             <div class="chart field atriskpercent current-year"></div>
             <p><span class="field enrollment amount current-year"></span> total enrollment</p>
             <p><span class="field atriskcount amount current-year"></span> at-risk students</p>
           </div>
-          <div class="column">
-            <h4>2015 Budget</h4>
+          <div class="column previous-year">
+            <h4><span class="year">2016</span> Budget</h4>
             <ul class="field budgetlines previous-year"></ul>
           </div>
-          <div class="column">
-            <h4>2016 Budget</h4>
+          <div class="column current-year">
+            <h4><span class="year">2017</span> Budget</h4>
             <ul class="field budgetlines current-year"></ul>
           </div>
           <a class="learndc button">View on LearnDC</a>
@@ -187,7 +189,7 @@
         </dl>
         </dd>
 
-        </dl>   
+        </dl>
 
         <h4>Learn More</h4>
         <p class="sources">DCPS's <a href="http://dcps.dc.gov/DCPS/Files/downloads/ABOUT%20DCPS/Budget%20-%20Finance/FY16%20documents/FY2016%20Final%20Budget%20Guide.pdf">FY2016 Budget Development Guide</a> provides a detailed review of the current budget process.
