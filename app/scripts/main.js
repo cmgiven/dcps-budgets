@@ -66,7 +66,9 @@
 
     app = {
         initialize: function (data) {
-            app.globals = {};
+            app.globals = {
+                comparison: 1
+            };
 
             $('#loading').fadeOut();
             $('#main').fadeIn();
@@ -142,6 +144,10 @@
                 app.setCategory($(e.target).attr('value'));
                 checkLegendVisibility();
             });
+
+            $('#comparisons').change(function (e) {
+                app.setComparison($(e.target).attr('value'));
+            });
         },
 
         filterData: function (filter) {
@@ -157,6 +163,7 @@
         },
 
         setCategory: function (category) {
+            category = category || app.globals.category;
             app.globals.category = category;
 
             var includedCategories = category === 'gened' ?
@@ -200,21 +207,28 @@
                 });
 
                 school.change = null;
-                if (_.has(school.selected, CURRENT_YEAR - 1)) {
+                if (_.has(school.selected, CURRENT_YEAR - app.globals.comparison)) {
                     school.change = (school.selected[CURRENT_YEAR].total /
                             school.enrollment[CURRENT_YEAR].total) /
-                        (school.selected[CURRENT_YEAR - 1].total /
-                            school.enrollment[CURRENT_YEAR - 1].total) - 1;
+                        (school.selected[CURRENT_YEAR - app.globals.comparison].total /
+                            school.enrollment[CURRENT_YEAR - app.globals.comparison].total) - 1;
                 }
 
                 school.enrchange = null;
-                if (_.has(school.selected, CURRENT_YEAR - 1)) {
-                    school.enrchange = ( school.enrollment[CURRENT_YEAR].total / school.enrollment[CURRENT_YEAR - 1].total ) - 1;
+                if (_.has(school.selected, CURRENT_YEAR - app.globals.comparison)) {
+                    school.enrchange = ( school.enrollment[CURRENT_YEAR].total / school.enrollment[CURRENT_YEAR - app.globals.comparison].total ) - 1;
                 }
 
             });
 
             if (app.view) { app.view.refresh(); }
+        },
+
+        setComparison: function (value) {
+            app.globals.comparison = value ==='one-year-ago' ? 1 : 2;
+            $('#school-view').hide();
+            $('#school-view .previous-year span.year').text(CURRENT_YEAR - app.globals.comparison);
+            app.setCategory();
         },
 
         loadView: function (view) {
@@ -389,16 +403,16 @@
                     '</span>' +
                     '<% }); %>' +
                     '</div>' +
-                    '<% if (selected[CURRENT_YEAR - 1]) { %>' +
+                    '<% if (selected[CURRENT_YEAR - app.globals.comparison]) { %>' +
                     '<div class="bar previous-year">' +
-                    '<span class="year"><%= CURRENT_YEAR - 1 + ": " %></span>' +
+                    '<span class="year"><%= CURRENT_YEAR - app.globals.comparison + ": " %></span>' +
                     '<span class="label">' +
-                    '<%= "$" + commasFormatter(selected[CURRENT_YEAR - 1].total / enrollment[CURRENT_YEAR - 1].total) %>' +
+                    '<%= "$" + commasFormatter(selected[CURRENT_YEAR - app.globals.comparison].total / enrollment[CURRENT_YEAR - app.globals.comparison].total) %>' +
                     '</span>' +
-                    '<% _.each(selected[CURRENT_YEAR - 1].lines, function (line) { %>' +
+                    '<% _.each(selected[CURRENT_YEAR - app.globals.comparison].lines, function (line) { %>' +
                     '<span ' +
                     'class="rect <%= line.category %>" title="<%= prettyCategories[line.category] %>"' +
-                    'style="width: <%= (line.value / enrollment[CURRENT_YEAR - 1].total) / max * 100 %>%;">' +
+                    'style="width: <%= (line.value / enrollment[CURRENT_YEAR - app.globals.comparison].total) / max * 100 %>%;">' +
                     '</span>' +
                     '<% }); %>' +
                     '</div>' +
@@ -444,7 +458,8 @@
             .entries(_.reject(data, function (school) {
                 return school.level === null ||
                     !_.has(school.budget, CURRENT_YEAR) ||
-                    !_.has(school.budget, CURRENT_YEAR - 1);
+                    !_.has(school.budget, CURRENT_YEAR - 1) ||
+                    !_.has(school.budget, CURRENT_YEAR - 2);
             }));
         this.data = _.sortBy(this.data, function (level) {
             return _.indexOf(['es', 'ms', 'hs', 'campus'], level.key);
@@ -502,8 +517,8 @@
 
             prevYearTip.append('text')
                 .text('$' + commasFormatter(
-                    d.selected[CURRENT_YEAR - 1].total /
-                        d.enrollment[CURRENT_YEAR - 1].total
+                    d.selected[CURRENT_YEAR - app.globals.comparison].total /
+                        d.enrollment[CURRENT_YEAR - app.globals.comparison].total
                 )).attr('text-anchor', 'middle');
 
             currYearTip.append('rect')
@@ -562,7 +577,7 @@
                 function (max, d) {
                     var maxTotal = Math.max(
                         d.selected[CURRENT_YEAR].total / d.enrollment[CURRENT_YEAR].total,
-                        d.selected[CURRENT_YEAR - 1].total / d.enrollment[CURRENT_YEAR - 1].total
+                        d.selected[CURRENT_YEAR - app.globals.comparison].total / d.enrollment[CURRENT_YEAR - app.globals.comparison].total
                     );
 
                     return maxTotal > max ? Math.ceil(maxTotal / 2000) * 2000 : max;
@@ -586,7 +601,7 @@
         this.bg.selectAll('.axis').remove();
 
         this.bg.append('g').attr('class', 'axis').call(leftAxis)
-            .append('text').text(CURRENT_YEAR - 1)
+            .append('text').text(CURRENT_YEAR - app.globals.comparison)
                 .attr('class', 'year')
                 .attr('x', 5).attr('y', 15);
 
@@ -615,8 +630,8 @@
         lines.transition()
             .duration(400)
             .attr('y1', function (d) {
-                d.y1 = that.y(d.selected[CURRENT_YEAR - 1].total /
-                    d.enrollment[CURRENT_YEAR - 1].total);
+                d.y1 = that.y(d.selected[CURRENT_YEAR - app.globals.comparison].total /
+                    d.enrollment[CURRENT_YEAR - app.globals.comparison].total);
 
                 return d.y1;
             })
@@ -661,13 +676,13 @@
 
         schoolView.selectAll('.field.schoolname')
             .text(d.name);
-        if (d.enrollment[CURRENT_YEAR - 1]) {
+        if (d.enrollment[CURRENT_YEAR - app.globals.comparison]) {
             schoolView.selectAll('.field.previous-year.atriskcount')
-                .text(d.enrollment[CURRENT_YEAR - 1].atRisk);
+                .text(d.enrollment[CURRENT_YEAR - app.globals.comparison].atRisk);
             schoolView.selectAll('.field.previous-year.enrollment')
-                .text(d.enrollment[CURRENT_YEAR - 1].total);
+                .text(d.enrollment[CURRENT_YEAR - app.globals.comparison].total);
             makeapie(previousPieChart,
-                d.enrollment[CURRENT_YEAR - 1].atRisk / d.enrollment[CURRENT_YEAR - 1].total);
+                d.enrollment[CURRENT_YEAR - app.globals.comparison].atRisk / d.enrollment[CURRENT_YEAR - app.globals.comparison].total);
         } else {
             schoolView.selectAll('.field.previous-year.atriskcount')
                 .text('0');
@@ -688,7 +703,7 @@
 
         budgetLines.selectAll('li').remove();
 
-        _.forEach({ current: CURRENT_YEAR, previous: CURRENT_YEAR - 1},
+        _.forEach({ current: CURRENT_YEAR, previous: CURRENT_YEAR - app.globals.comparison},
             function (year, key) {
                 var ul = schoolView.selectAll('ul.field.budgetlines.' + key + '-year'),
                     lines = d.budget[year];
