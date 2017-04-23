@@ -11,7 +11,7 @@
 
         DATA_PATH = 'data/data.csv',
 
-        CURRENT_YEAR = 2017,
+        CURRENT_YEAR = 2018,
 
         CATEGORIES = {
             enrollment: 'Enrollment-Based Funds',
@@ -54,10 +54,7 @@
 
             row.enrollment[d.YEAR] = {
                 total:  d.TOTALENROLLMENT === '' ? null : +d.TOTALENROLLMENT,
-                atRisk: d.ATRISKENROLLMENT === '' ? null : +d.ATRISKENROLLMENT,
-                sped:   d.SPEDENROLLMENT === '' ? null : +d.SPEDENROLLMENT,
-                ell:    d.ELLENROLLMENT === '' ? null : +d.ELLENROLLMENT,
-                ece:    d.ECEENROLLMENT === '' ? null : +d.ECEENROLLMENT
+                atRisk: d.ATRISKENROLLMENT === '' ? null : +d.ATRISKENROLLMENT
             };
 
             return row;
@@ -89,6 +86,8 @@
                 var school = _.find(app.data, function (school) {
                     return school.code === row.code;
                 });
+
+                if (!school) { return; }
 
                 school.budget[row.year] = row.budget[row.year];
                 school.enrollment[row.year] = row.enrollment[row.year];
@@ -225,7 +224,7 @@
         },
 
         setComparison: function (value) {
-            app.globals.comparison = value ==='one-year-ago' ? 1 : 2;
+            app.globals.comparison = value ==='one-year-ago' ? 1 : value ==='two-years-ago' ? 2 : 3;
             $('#school-view').hide();
             $('#school-view .previous-year span.year').text(CURRENT_YEAR - app.globals.comparison);
             app.setCategory();
@@ -456,10 +455,7 @@
         this.data = d3.nest()
             .key(function (d) { return d.level; })
             .entries(_.reject(data, function (school) {
-                return school.level === null ||
-                    !_.has(school.budget, CURRENT_YEAR) ||
-                    !_.has(school.budget, CURRENT_YEAR - 1) ||
-                    !_.has(school.budget, CURRENT_YEAR - 2);
+                return school.level === null;
             }));
         this.data = _.sortBy(this.data, function (level) {
             return _.indexOf(['es', 'ms', 'hs', 'campus'], level.key);
@@ -577,7 +573,7 @@
                 function (max, d) {
                     var maxTotal = Math.max(
                         d.selected[CURRENT_YEAR].total / d.enrollment[CURRENT_YEAR].total,
-                        d.selected[CURRENT_YEAR - app.globals.comparison].total / d.enrollment[CURRENT_YEAR - app.globals.comparison].total
+                        _.get(d, ['selected', CURRENT_YEAR - app.globals.comparison, 'total'], 0) / _.get(d, ['enrollment', CURRENT_YEAR - app.globals.comparison, 'total'], 1)
                     );
 
                     return maxTotal > max ? Math.ceil(maxTotal / 2000) * 2000 : max;
@@ -618,7 +614,9 @@
             .attr('x', -(this.margin.left + this.margin.right) / 2);
 
         lines = this.fg.selectAll('.line')
-            .data(function (d) { return d.values; });
+            .data(function (d) { return _.reject(d.values, function (school) {
+                return !_.has(school.budget, CURRENT_YEAR - app.globals.comparison);
+            }); }, function (d) { return d.code; });
 
         lines.enter().append('line')
             .attr('class', function (d) { return 'line school-' + d.code; })
@@ -642,8 +640,13 @@
                 return d.y2;
             });
 
+        lines.exit().remove();
+
         interactionLines = this.interactionLayer.selectAll('.interaction-line')
-            .data(function (d) { return _.reject(d.values, 'filtered'); });
+            .data(function (d) {
+                return _.reject(d.values, 'filtered') ||
+                    !_.has(school.budget, CURRENT_YEAR - app.globals.comparison);
+            });
 
         interactionLines.enter().append('line')
             .attr('class', 'interaction-line')

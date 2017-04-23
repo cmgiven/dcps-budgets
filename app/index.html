@@ -39,7 +39,7 @@
     <div id="main">
       <header>
         <h1>Per Student Funding</h1>
-        <h2 class="tagline">Examining how DCPS budgets will change under the FY17 budget proposal</h2>
+        <h2 class="tagline">Examining how DCPS budgets will change under the FY18 budget proposal</h2>
         <p class="what"><a href="#description">What is this?</a> | <a href="#definitions">Definitions</a> | <a href="#sources">Sources and Notes</a></p>
       </header>
       <div id="controls">
@@ -65,10 +65,12 @@
           <label for="category-income">Income-Linked</label> -->
         </form>
         <form id="comparisons">
+          <input type="radio" name="view" id="compare-three-years-ago" value="three-years-ago" />
+          <label for="compare-three-years-ago">Compare to 2015</label>
           <input type="radio" name="view" id="compare-two-years-ago" value="two-years-ago" />
-          <label for="compare-two-years-ago">Compare to 2015</label>
+          <label for="compare-two-years-ago">Compare to 2016</label>
           <input type="radio" name="view" id="compare-one-year-ago" value="one-year-ago" checked="checked" />
-          <label for="compare-one-year-ago">Compare to 2016</label>
+          <label for="compare-one-year-ago">Compare to 2017</label>
         </form>
         <form id="filters">
           <input type="radio" name="fortyForty" id="school-all" checked="checked" />
@@ -126,23 +128,23 @@
         <div class="container">
           <h2 class="field schoolname">School Name</h2>
           <div class="column previous-year">
-            <h4><span class="year">2016</span> Enrollment</h4>
+            <h4><span class="year">2017</span> Enrollment</h4>
             <div class="chart field atriskpercent previous-year"></div>
             <p><span class="field enrollment amount previous-year"></span> total enrollment</p>
             <p><span class="field atriskcount amount previous-year"></span> at-risk students</p>
           </div>
           <div class="column current-year">
-            <h4><span class="year">2017</span> Enrollment</h4>
+            <h4><span class="year">2018</span> Enrollment</h4>
             <div class="chart field atriskpercent current-year"></div>
             <p><span class="field enrollment amount current-year"></span> total enrollment</p>
             <p><span class="field atriskcount amount current-year"></span> at-risk students</p>
           </div>
           <div class="column previous-year">
-            <h4><span class="year">2016</span> Budget</h4>
+            <h4><span class="year">2017</span> Budget</h4>
             <ul class="field budgetlines previous-year"></ul>
           </div>
           <div class="column current-year">
-            <h4><span class="year">2017</span> Budget</h4>
+            <h4><span class="year">2018</span> Budget</h4>
             <ul class="field budgetlines current-year"></ul>
           </div>
           <a class="learndc button">View on LearnDC</a>
@@ -150,12 +152,10 @@
         <button class="close">&times;</button>
       </div>
       <div id="description">
-        <h4>Changes in Individual School Budgets in FY17</h4>
+        <h4>Changes in Individual School Budgets in FY18</h4>
         <p>The funds allocated to an individual school in the DC Public Schools (DCPS) in a given year come from a variety of sources, local and federal.</p>
-        <p>For the 2016-2017 school year, the Uniform Per Student Funding Formula (UPSFF) received a 2 percent inflation adjustment and provides $9,682 local dollars per student for general education and additional increments for special education, English language learner and at-risk students.</p>
-        <p>Because these latter increments are targeted to students with specific needs, they should not be repurposed by the school.</p>
-        <p>Code for DC created this interactive graphic to show how both general education and overall funding were allocated by DCPS across schools and how those allocations changed between the current school year (2015-16) and proposed budgets (2016-17).</p>
-        <p>Controls above the chart will filter the schools shown by ward or by level (elementary/middle/high/education campus). Selecting a school will reveal detailed information on the school's current (2015-2016) and proposed (2016-2017) funding sources.</p>
+        <p>Code for DC created this interactive graphic to show how both general education and overall funding were allocated by DCPS across schools and how those allocations changed between the current school year (2016-17) and proposed budgets (2017-18).</p>
+        <p>Controls above the chart will filter the schools shown by ward or by level (elementary/middle/high/education campus). Selecting a school will reveal detailed information on the school's current (2016-17) and proposed (2017-2018) funding sources.</p>
         <h4 id="definitions">Definitions</h4>
         <dl>
             <dt><b>General Education Funds</b></dt>
@@ -222,7 +222,7 @@
     <!-- bower:js -->
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/d3/d3.js"></script>
-    <script src="../bower_components/lodash/lodash.min.js"></script>
+    <script src="../bower_components/lodash/lodash.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
