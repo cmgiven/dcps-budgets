@@ -281,14 +281,14 @@ input[type="radio"] {
   span.amount {
     color: #343536;
     display: inline-block;
-    width: 33px;
+    width: 40px;
   }
 
   div.wrapper {
     position: absolute;
     top: 0;
     left: 11px;
-    right: 120px;
+    right: 133px;
   }
 
   div.bar {
@@ -634,7 +634,7 @@ button.close {
     width: 3px;
     display: inline-block;
     border-radius: 3px;
-    
+
     -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
     animation: stretchdelay 1.2s infinite ease-in-out;
   }
@@ -661,15 +661,15 @@ button.close {
 }
 
 @-webkit-keyframes stretchdelay {
-  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
   20% { -webkit-transform: scaleY(1.0) }
 }
 
 @keyframes stretchdelay {
-  0%, 40%, 100% { 
+  0%, 40%, 100% {
     transform: scaleY(0.4);
     -webkit-transform: scaleY(0.4);
-  }  20% { 
+  }  20% {
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   }

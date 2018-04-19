@@ -11,7 +11,7 @@
 
         DATA_PATH = 'data/data.csv',
 
-        CURRENT_YEAR = 2018,
+        CURRENT_YEAR = 2019,
 
         CATEGORIES = {
             enrollment: 'Enrollment-Based Funds',
@@ -26,7 +26,8 @@
         },
 
         commasFormatter = d3.format(',.0f'),
-        schoolCodeFormatter = d3.format('04d');
+        schoolCodeFormatter = d3.format('04d'),
+        yearFormatter = function (year) { return year-1 + "-" + year.toString().substring(2); };
 
     $(function () {
         d3.csv(DATA_PATH, function (d) {
@@ -224,9 +225,9 @@
         },
 
         setComparison: function (value) {
-            app.globals.comparison = value ==='one-year-ago' ? 1 : value ==='two-years-ago' ? 2 : 3;
+            app.globals.comparison = value ==='one-year-ago' ? 1 : value ==='two-years-ago' ? 2 : value ==='three-years-ago' ? 3 : 4;
             $('#school-view').hide();
-            $('#school-view .previous-year span.year').text(CURRENT_YEAR - app.globals.comparison);
+            $('#school-view .previous-year span.year').text(yearFormatter(CURRENT_YEAR - app.globals.comparison));
             app.setCategory();
         },
 
@@ -271,7 +272,7 @@
             .attr('scope', 'col')
             .attr('data-sort', 'enrollment')
             .attr('class', 'descending')
-            .text(CURRENT_YEAR + ' Enrollment')
+            .text(yearFormatter(CURRENT_YEAR) + ' Enrollment')
             .append('span')
             .attr('class', 'sort-arrow');
         header.append('th')
@@ -391,7 +392,7 @@
                     '<td>' +
                     '<div class="wrapper">' +
                     '<div class="bar">' +
-                    '<span class="year"><%= CURRENT_YEAR + ": " %></span>' +
+                    '<span class="year"><%= yearFormatter(CURRENT_YEAR) + ": " %></span>' +
                     '<span class="label">' +
                     '<%= "$" + commasFormatter(selected[CURRENT_YEAR].total / enrollment[CURRENT_YEAR].total) %>' +
                     '</span>' +
@@ -404,7 +405,7 @@
                     '</div>' +
                     '<% if (selected[CURRENT_YEAR - app.globals.comparison]) { %>' +
                     '<div class="bar previous-year">' +
-                    '<span class="year"><%= CURRENT_YEAR - app.globals.comparison + ": " %></span>' +
+                    '<span class="year"><%= yearFormatter(CURRENT_YEAR - app.globals.comparison) + ": " %></span>' +
                     '<span class="label">' +
                     '<%= "$" + commasFormatter(selected[CURRENT_YEAR - app.globals.comparison].total / enrollment[CURRENT_YEAR - app.globals.comparison].total) %>' +
                     '</span>' +
@@ -423,6 +424,7 @@
                     '"><%= change ? (change * 100).toFixed(1) + "%" : "NA" %></td>',
                 { 'imports': {
                         'commasFormatter': commasFormatter,
+                        'yearFormatter': yearFormatter,
                         'CURRENT_YEAR': CURRENT_YEAR,
                         'max': max,
                         'prettyCategories': CATEGORIES
