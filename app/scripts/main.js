@@ -11,7 +11,7 @@
 
         DATA_PATH = 'data/data.csv',
 
-        CURRENT_YEAR = 2019,
+        CURRENT_YEAR = 2020,
 
         CATEGORIES = {
             enrollment: 'Enrollment-Based Funds',
@@ -22,6 +22,7 @@
             ell: 'English Language Learner Funds',
             atrisk: 'At-Risk Funds',
             income: 'Federal Title and ASP/ECR Funds',
+            security: 'Security Funds',
             other: 'Non-General Education Funds'
         },
 
@@ -50,7 +51,8 @@
                 { category: "sped", value: +d.AMT_SPED },
                 { category: "ell", value: +d.AMT_ELL },
                 { category: "atrisk", value: +d.AMT_ATRISK },
-                { category: "income", value: (+d.AMT_TITLE) + (+d.AMT_ASPECR) }
+                { category: "income", value: (+d.AMT_TITLE) + (+d.AMT_ASPECR) },
+                { category: "security", value: +d.AMT_SECURITY }
             ];
 
             row.enrollment[d.YEAR] = {
@@ -169,7 +171,7 @@
             var includedCategories = category === 'gened' ?
                     ['enrollment', 'specialty', 'perpupilmin', 'stabilization'] :
                     category === 'total' ?
-                    ['enrollment', 'specialty', 'perpupilmin', 'stabilization', 'sped', 'ell', 'atrisk', 'income'] :
+                    ['enrollment', 'specialty', 'perpupilmin', 'stabilization', 'sped', 'ell', 'atrisk', 'income', 'security'] :
                     [category],
                 sum = function (sum, line) {
                     return sum + line.value;
@@ -178,7 +180,7 @@
             _.each(app.data, function (school) {
                 school.selected = {};
                 _.each(school.budget, function (lines, year) {
-                    var total, partition, selected;
+                    var total, partition, selected, withoutSecurity;
 
                     // if (category === 'total') {
                     //     total = _.reduce(lines, sum, 0);
@@ -192,10 +194,14 @@
                         partition = _.partition(lines, function (line) {
                             return _.includes(includedCategories, line.category);
                         });
+                        withoutSecurity = _.filter(lines, function (line) {
+                            return _.includes(includedCategories, line.category) && line.category !== 'security';
+                        })
                         selected = {};
 
                         selected.lines = partition[0];
                         selected.total = _.reduce(selected.lines, sum, 0);
+                        selected.totalMinusSecurity = _.reduce(withoutSecurity, sum, 0);
                         selected.lines.push({
                             category: 'other',
                             value: _.reduce(partition[1], sum, 0)
@@ -208,7 +214,8 @@
 
                 school.change = null;
                 if (_.has(school.selected, CURRENT_YEAR - app.globals.comparison)) {
-                    school.change = (school.selected[CURRENT_YEAR].total /
+                    // TODO: Deducting security is only necessary when the comparison year does not include it.
+                    school.change = (school.selected[CURRENT_YEAR].totalMinusSecurity /
                             school.enrollment[CURRENT_YEAR].total) /
                         (school.selected[CURRENT_YEAR - app.globals.comparison].total /
                             school.enrollment[CURRENT_YEAR - app.globals.comparison].total) - 1;
@@ -225,7 +232,7 @@
         },
 
         setComparison: function (value) {
-            app.globals.comparison = value ==='one-year-ago' ? 1 : value ==='two-years-ago' ? 2 : value ==='three-years-ago' ? 3 : 4;
+            app.globals.comparison = value ==='one-year-ago' ? 1 : value ==='two-years-ago' ? 2 : value ==='three-years-ago' ? 3 : value ==='four-years-ago' ? 4 : 5;
             $('#school-view').hide();
             $('#school-view .previous-year span.year').text(yearFormatter(CURRENT_YEAR - app.globals.comparison));
             app.setCategory();
@@ -683,9 +690,9 @@
             .text(d.name);
         if (d.enrollment[CURRENT_YEAR - app.globals.comparison]) {
             schoolView.selectAll('.field.previous-year.atriskcount')
-                .text(d.enrollment[CURRENT_YEAR - app.globals.comparison].atRisk);
+                .text(replaceBlank(d.enrollment[CURRENT_YEAR - app.globals.comparison].atRisk));
             schoolView.selectAll('.field.previous-year.enrollment')
-                .text(d.enrollment[CURRENT_YEAR - app.globals.comparison].total);
+                .text(replaceBlank(d.enrollment[CURRENT_YEAR - app.globals.comparison].total));
             makeapie(previousPieChart,
                 d.enrollment[CURRENT_YEAR - app.globals.comparison].atRisk / d.enrollment[CURRENT_YEAR - app.globals.comparison].total);
         } else {
@@ -697,9 +704,9 @@
         }
 
         schoolView.selectAll('.field.current-year.atriskcount')
-            .text(d.enrollment[CURRENT_YEAR].atRisk);
+            .text(replaceBlank(d.enrollment[CURRENT_YEAR].atRisk));
         schoolView.selectAll('.field.current-year.enrollment')
-            .text(d.enrollment[CURRENT_YEAR].total);
+            .text(replaceBlank(d.enrollment[CURRENT_YEAR].total));
         makeapie(pieChart,
             d.enrollment[CURRENT_YEAR].atRisk / d.enrollment[CURRENT_YEAR].total);
 
@@ -721,6 +728,10 @@
                             CATEGORIES[line.category]);
                 });
             });
+
+        function replaceBlank (value) {
+            return !value && value !== 0 ? '' : value;
+        }
 
         function makeapie (div, percent) {
             div.selectAll('svg').remove();
@@ -758,6 +769,8 @@
                 .transition()
                 .duration(1000 * percent)
                 .tween('text', function () {
+                    if (!percent && percent !== 0) { return function () { this.textContent = '' }; }
+
                     var i = function (t) {
                         return (percent * t * 100).toFixed(0) + '%';
                     };

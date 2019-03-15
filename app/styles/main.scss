@@ -345,6 +345,7 @@ input[type="radio"] {
     &.ell { background: #b180a1}
     &.atrisk { background: #cda51b}
     &.income { background: #5c4678}
+    &.security { background: #c3855d}
     &.other { background: #9aa6a8}
   }
 
@@ -413,6 +414,7 @@ input[type="radio"] {
     &.ell:before { background: #b180a1}
     &.atrisk:before { background: #cda51b}
     &.income:before { background: #5c4678}
+    &.security:before { background: #ce855d}
     &.other:before { background: #9aa6a8}
   }
 }
