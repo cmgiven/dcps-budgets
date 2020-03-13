@@ -11,7 +11,8 @@
 
         DATA_PATH = 'data/data.csv',
 
-        CURRENT_YEAR = 2020,
+        CURRENT_YEAR = 2021,
+        MAX_FUNDING = 33247,
 
         CATEGORIES = {
             enrollment: 'Enrollment-Based Funds',
@@ -21,7 +22,7 @@
             sped: 'Special Education Funds',
             ell: 'English Language Learner Funds',
             atrisk: 'At-Risk Funds',
-            income: 'Federal Title and ASP/ECR Funds',
+            income: 'Grant Funds',
             security: 'Security Funds',
             other: 'Non-General Education Funds'
         },
@@ -232,7 +233,7 @@
         },
 
         setComparison: function (value) {
-            app.globals.comparison = value ==='one-year-ago' ? 1 : value ==='two-years-ago' ? 2 : value ==='three-years-ago' ? 3 : value ==='four-years-ago' ? 4 : 5;
+            app.globals.comparison = value ==='one-year-ago' ? 1 : value ==='two-years-ago' ? 2 : value ==='three-years-ago' ? 3 : value ==='four-years-ago' ? 4 : value ==='five-years-ago' ? 5 : 6;
             $('#school-view').hide();
             $('#school-view .previous-year span.year').text(yearFormatter(CURRENT_YEAR - app.globals.comparison));
             app.setCategory();
@@ -386,9 +387,7 @@
 
         this.sort = sort || this.sort;
 
-        var maxSchool = this.data[0],
-            max = maxSchool.selected[CURRENT_YEAR].fullBudget /
-                maxSchool.enrollment[CURRENT_YEAR].total,
+        var max = MAX_FUNDING,
             rows = this.tbody.selectAll('tr.bar')
                 .data(_.sortBy(this.data, this.sort)),
             rowTemplate = _.template(
