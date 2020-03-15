@@ -22,7 +22,7 @@
             sped: 'Special Education Funds',
             ell: 'English Language Learner Funds',
             atrisk: 'At-Risk Funds',
-            income: 'Grant Funds',
+            income: 'Grant and ASP/ECR Funds',
             security: 'Security Funds',
             other: 'Non-General Education Funds'
         },
